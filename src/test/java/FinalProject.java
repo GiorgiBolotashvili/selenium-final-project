@@ -1,5 +1,6 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -10,6 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.*;
 import org.openqa.selenium.WebDriver;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -55,6 +57,7 @@ public class FinalProject {
         driver.manage().window().maximize();
         Actions action = new Actions(driver);
         WebDriverWait wait = new WebDriverWait(driver, 10);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
 //        FluentWait fluentWait = new FluentWait(driver);
         driver.findElement(By.xpath("//*[@id=\"top-links\"]/ul/li[2]/a/span[1]")).click();
         driver.findElement(By.xpath("//*[@id=\"top-links\"]/ul/li[2]/ul/li[1]/a")).click();
@@ -77,13 +80,12 @@ public class FinalProject {
 //        driver.findElement(By.xpath("//*[@id=\"content\"]/form/div/div/input[1]")).click();
 
         driver.findElement(By.cssSelector("input[type='checkbox']")).click();
-        driver.findElement(By.className("btn-primary")).click();
+        driver.findElement(By.className("btn-primary")).click();   // First use of className
 //        driver.findElement(By.cssSelector("input[type='submit']"));
 
      //   Thread.sleep(10000);
         WebElement desktop = driver.findElement(By.xpath("//*[@id=\"menu\"]/div[2]/ul/li[1]/a"));
         action.moveToElement(desktop).build().perform();
-
         try {
             WebElement allDesktos = driver.findElement(By.xpath("//*[@id=\"menu\"]/div[2]/ul/li[1]/div/a"));
             if (allDesktos.isDisplayed())
@@ -93,7 +95,10 @@ public class FinalProject {
         {
             System.out.println(ex.getMessage());
         }
-        driver.findElement(By.xpath("//*[@id=\"column-left\"]/div[1]/a[10]")).click();
+
+        WebElement mp3 =  driver.findElement(By.xpath("//*[@id=\"column-left\"]/div[1]/a[10]"));
+        js.executeScript("arguments[0].click()", mp3);
+
         WebElement ipod = driver.findElement(By.xpath("//*[@id=\"content\"]/div[4]/div[1]/div/div[1]/a/img"));
         action.moveToElement(ipod).build().perform();
         Assert.assertEquals(ipod.getAttribute("title"), "iPod Classic");
@@ -104,11 +109,10 @@ public class FinalProject {
         driver.findElement(By.xpath("//*[@id=\"content\"]/div/div[1]/ul[1]/li[1]/a/img")).click();
 //        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("mfp-img")));
         WebElement next = driver.findElement(By.xpath("/html/body/div[2]/div/button[2]"));
-//        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("/html/body/div[2]/div/div[1]/div/figure/img")));
-        while (!driver.findElement(By.className("mfp-counter")).getText().equals("4 of 4")){
+        while (!driver.findElement(By.className("mfp-counter")).getText().equals("4 of 4")){  //Second use of className
             next.click();
         }
-        driver.findElement(By.className("mfp-close")).click();
+        driver.findElement(By.className("mfp-close")).click();  // The third use of className
         driver.findElement(By.xpath("//*[@id=\"content\"]/div/div[1]/ul[2]/li[2]/a")).click();
 //        Write a review and submit
         driver.findElement(By.cssSelector("input#input-name")).sendKeys("Giorgi");
@@ -117,31 +121,31 @@ public class FinalProject {
         driver.findElement(By.cssSelector("textarea#input-review")).sendKeys(myReview);
         driver.findElement(By.xpath("//*[@id=\"form-review\"]/div[4]/div/input[5]")).click();
         driver.findElement(By.id("button-review")).click();
-        Thread.sleep(10000);
+//        Thread.sleep(10000);
 //        save iPod classic price
-        String price = driver.findElement(By.xpath("//*[@id=\"content\"]/div/div[2]/ul[2]/li[1]/h2")).getText();
+        String firstPrice = driver.findElement(By.xpath("//*[@id=\"content\"]/div/div[2]/ul[2]/li[1]/h2")).getText();
         driver.findElement(By.id("button-cart")).click();
 //        Wait for the product added to the cart to appear. Check by price.
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'"+price+"')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'"+firstPrice+"')]")));
         System.out.println(test + ": " + driver.findElement(By.id("cart-total")).getText());
-        Assert.assertTrue(driver.findElement(By.id("cart-total")).getText().contains(price));
+        Assert.assertTrue(driver.findElement(By.id("cart-total")).getText().contains(firstPrice));
 
         driver.findElement(By.xpath("//*[@id=\"cart\"]/button")).click();
+//        Thread.sleep(15000);
         driver.findElement(By.xpath("//*[@id=\"cart\"]/ul/li[2]/div/p/a[2]/strong")).click();
-
+//        Fill Billing Details
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[id$='firstname']")));
         driver.findElement(By.cssSelector("input[id$='firstname']")).sendKeys(firstName);
         driver.findElement(By.cssSelector("input[id$='lastname']")).sendKeys(lastName);
         driver.findElement(By.cssSelector("input[id$='address-1']")).sendKeys("my address");
         driver.findElement(By.cssSelector("input[id$='city']")).sendKeys("city");
         driver.findElement(By.cssSelector("input[id$='postcode']")).sendKeys("1010");
-
+//        choose Georgia and Tbilisi
         List<WebElement> countryes = driver.findElements(By.xpath("//*[@id=\"input-payment-country\"]/option"));
         for ( WebElement c: countryes) {
             if(c.getText().equals("Georgia"))
                 c.click();
         }
-
         List<WebElement> states = driver.findElements(By.xpath("//*[@id=\"input-payment-zone\"]/option"));
         for ( WebElement s: states) {
             if(s.getText().equals("Tbilisi"))
@@ -150,22 +154,23 @@ public class FinalProject {
 
         driver.findElement(By.xpath("//*[@id=\"button-payment-address\"]")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"button-shipping-address\"]")));
-        driver.findElement(By.xpath("//*[@id=\"button-shipping-address\"]")).click();
+        js.executeScript("document.getElementById('button-shipping-address').click();");
+
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"button-shipping-method\"]")));
-        driver.findElement(By.xpath("//*[@id=\"button-shipping-method\"]")).click();
+        js.executeScript("document.getElementById('button-shipping-method').click();");
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"collapse-payment-method\"]/div/div[2]/div/input[1]")));
         driver.findElement(By.xpath("//*[@id=\"collapse-payment-method\"]/div/div[2]/div/input[1]")).click();
 //        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"button-payment-method\"]")));
-        driver.findElement(By.xpath("//*[@id=\"button-payment-method\"]")).click();
+        js.executeScript("document.getElementById('button-payment-method').click();");
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"button-confirm\"]")));
         WebElement table = driver.findElement(By.xpath("//*[@id=\"collapse-checkout-confirm\"]/div/div[1]/table/tfoot"));
         List<WebElement> rows = table.findElements(By.tagName("tr"));
 
-        String subTotal;
+        String subTotal = "";
         String shipingRate;
         String total;
-        System.out.println(test + ": Check subtotal, flat Shipping Rate and total amount is correct");
+// Check subtotal, flat Shipping Rate and total amount is correct
         for (int r=1; r<=rows.size(); r++){
                 WebElement item = driver.findElement(By.xpath("//*[@id=\"collapse-checkout-confirm\"]/div/div[1]/table/tfoot/tr["+r+"]/td[1]"));
                 if(item.getText().equals("Sub-Total:")){
@@ -181,29 +186,33 @@ public class FinalProject {
                     System.out.println(item.getText()+": "+total);
                 }
         }
+        if (firstPrice.equals(subTotal))
+        {
+            System.out.println("A");
+        }
+        else
+            System.out.println("B");
         driver.findElement(By.xpath("//*[@id=\"button-confirm\"]")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"content\"]/p[2]/a[2]")));
         driver.findElement(By.xpath("//*[@id=\"content\"]/p[2]/a[2]")).click();
+//        check that status is 'Pending' and date equal to current date
         WebElement history = driver.findElement(By.xpath("//*[@id=\"content\"]/div[1]/table"));
         List<WebElement> historyRows = history.findElements(By.tagName("tr"));
-
         int columnSize = historyRows.get(0).findElements(By.tagName("td")).size();
         for (int c=1; c<=columnSize; c++){
             WebElement item = driver.findElement(By.xpath("//*[@id=\"content\"]/div[1]/table/thead/tr/td["+c+"]"));
             if (item.getText().equals("Status")){
                 String pending = driver.findElement(By.xpath("//*[@id=\"content\"]/div[1]/table/tbody/tr/td["+c+"]")).getText();
+                System.out.println("1: " + pending );
                 Assert.assertEquals(pending,"Pending");
-                System.out.println("1");
             }
             else if (item.getText().contains("Date")){
                 String date = driver.findElement(By.xpath("//*[@id=\"content\"]/div[1]/table/tbody/tr/td["+c+"]")).getText();
-                Assert.assertEquals(date,new Date());
-                System.out.println("2");
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                System.out.println("2: " + formatter.format(new Date()) );
+                Assert.assertEquals(date, formatter.format(new Date()));
             }
         }
-      System.out.println(test + ": finish " + new Date());
-
-
     }
     @AfterMethod
     public void tearDown(){
