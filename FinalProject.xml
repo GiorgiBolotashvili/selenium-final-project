@@ -11,11 +11,11 @@
         </classes>
     </test>
 
-<!--    <test name="EdgeTest">
+    <test name="EdgeTest">
         <parameter name="browser" value="Edge" />
         <classes>
             <class name="FinalProject">
             </class>
         </classes>
-    </test>-->
+    </test>
 </suite>
