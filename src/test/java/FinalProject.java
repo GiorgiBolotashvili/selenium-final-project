@@ -54,7 +54,7 @@ public class FinalProject {
         File filePath = new File("D:\\" + fileName);
         File screen = screenShot.getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(screen, filePath);
-
+//        Register new account
         driver.findElement(By.xpath("//*[@id=\"top-links\"]/ul/li[2]/a/span[1]")).click();                              // Using relative XPath: example one
         driver.findElement(By.xpath("//*[@id=\"top-links\"]/ul/li[2]/ul/li[1]/a")).click();
         String firstName = "firstName";
@@ -70,9 +70,9 @@ public class FinalProject {
         WebElement subscribe = driver.findElement(By.xpath("//*[@id=\"content\"]/form/fieldset[3]/div/div/label[1]"));
         if ((!subscribe.isSelected()) & subscribe.getText().equals("Yes"))
             subscribe.click();
-
         driver.findElement(By.cssSelector("input[type='checkbox']")).click();                                           // Using cssSelector: example two
         driver.findElement(By.className("btn-primary")).click();                                                        // Using className: example one
+//        go to page: MP3 Players
         WebElement desktop = driver.findElement(By.xpath("//*[@id=\"menu\"]/div[2]/ul/li[1]/a"));
         action.moveToElement(desktop).build().perform();
         try {
@@ -84,31 +84,31 @@ public class FinalProject {
         }
         WebElement mp3 = driver.findElement(By.xpath("//*[@id=\"column-left\"]/div[1]/a[10]"));
         js.executeScript("arguments[0].click()", mp3);                                                               // Using JavascriptExecutor: example one
-//        check that 'iPod Classic' text is visible on mouse hover
-        WebElement ipod = driver.findElement(By.xpath("//*[@id=\"content\"]/div[4]/div[1]/div/div[1]/a/img"));
+//        check that 'iPod Shuffle' text is visible on mouse hover
+        WebElement ipod = driver.findElement(By.xpath("//*[@id=\"content\"]/div[4]/div[3]/div/div[1]/a/img"));
         action.moveToElement(ipod).build().perform();
-        Assert.assertEquals(ipod.getAttribute("title"), "iPod Classic");
-        if (ipod.getAttribute("title").equals("iPod Classic")) {
-            driver.findElement(By.xpath("//*[@id=\"content\"]/div[4]/div[1]/div/div[2]/div[1]/h4/a")).click();
+        Assert.assertEquals(ipod.getAttribute("title"), "iPod Shuffle");
+        if (ipod.getAttribute("title").equals("iPod Shuffle")) {
+            ipod.click();
         }
         driver.findElement(By.xpath("//*[@id=\"content\"]/div/div[1]/ul[1]/li[1]/a/img")).click();
         WebElement next = driver.findElement(By.xpath("//*[contains(@class,'mfp-arrow-right')]"));                      // Using relative XPath: example two
-        while (!driver.findElement(By.className("mfp-counter")).getText().equals("4 of 4")) {                           // Using className: example two
+        while (!driver.findElement(By.className("mfp-counter")).getText().equals("5 of 5")) {                           // Using className: example two
             next.click();
         }
         driver.findElement(By.className("mfp-close")).click();                                                          // // Using className: example three
         driver.findElement(By.xpath("//*[@id=\"content\"]/div/div[1]/ul[2]/li[2]/a")).click();
 //        Write a review and submit
         driver.findElement(By.cssSelector("input#input-name")).sendKeys("Giorgi");
-        String myReview = "The Apple iPod Classic offers a solid, understated design with an easy-to-use " +
-                "interface and unbelievably generous capacity.";
+        String myReview = "The Apple iPod Shuffle is affordably priced with a compact design and long-lasting battery." +
+                " It's both stylish and easily wearable, thanks to its sturdy built-in clip.";
         driver.findElement(By.cssSelector("textarea#input-review")).sendKeys(myReview);
         driver.findElement(By.xpath("//*[@id=\"form-review\"]/div[4]/div//following::input[5]")).click();               // Using relative XPath: example three
         driver.findElement(By.id("button-review")).click();   //*[@class="btn-primary""]
-//        save iPod classic price
+//        save iPod Shuffle total price
         WebElement price = driver.findElement(By.xpath("//*[@id=\"content\"]/div/div[2]/ul[2]/li[1]/h2"));
         String firstPrice = (String) js.executeScript("return arguments[0].innerText;", price);                      // Using JavascriptExecutor: example two
-        System.out.println(test + ": " + firstPrice);
+        System.out.println(test + ": First total amount is: " + firstPrice);
 //        save empty cart text
         String emptyCart = driver.findElement(By.cssSelector("#cart-total")).getText();
         driver.findElement(By.id("button-cart")).click();
@@ -134,6 +134,7 @@ public class FinalProject {
         driver.findElement(By.cssSelector("input[id$='city']")).sendKeys("city");
         driver.findElement(By.cssSelector("input[id$='postcode']")).sendKeys("1010");
 //        choose Georgia and Tbilisi
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"input-payment-country\"]/option")));
         List<WebElement> countryes = driver.findElements(By.xpath("//*[@id=\"input-payment-country\"]/option"));
         for (WebElement c : countryes) {
             if (c.getText().equals("Georgia"))
@@ -144,6 +145,7 @@ public class FinalProject {
             if (s.getText().equals("Tbilisi"))
                 s.click();
         }
+
         driver.findElement(By.xpath("//*[@id=\"button-payment-address\"]")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"button-shipping-address\"]")));
         js.executeScript("document.getElementById('button-shipping-address').click();");                             // Using JavascriptExecutor: example three
@@ -168,11 +170,11 @@ public class FinalProject {
                 subTotal = driver.findElement(By.xpath("//*[@id=\"collapse-checkout-confirm\"]/div/div[1]/table/tfoot/tr[" + r + "]/td[2]")).getText();
                 System.out.println(test + ": " + item.getText() + "  " + subTotal);
             }
-            if (item.getText().equals("Flat Shipping Rate:")) {
+            else if (item.getText().equals("Flat Shipping Rate:")) {
                 shipingRate = driver.findElement(By.xpath("//*[@id=\"collapse-checkout-confirm\"]/div/div[1]/table/tfoot/tr[" + r + "]/td[2]")).getText();
                 System.out.println(test + ": " + item.getText() + "  " + shipingRate);
             }
-            if (item.getText().equals("Total:")) {
+            else if (item.getText().equals("Total:")) {
                 total = driver.findElement(By.xpath("//*[@id=\"collapse-checkout-confirm\"]/div/div[1]/table/tfoot/tr[" + r + "]/td[2]")).getText();
                 System.out.println(test + ": " + item.getText() + "  " + total);
             }
@@ -196,9 +198,10 @@ public class FinalProject {
                 System.out.println(test + ": " +"Status: " + pending);
                 Assert.assertEquals(pending, "Pending");
             }
-            if (item.getText().contains("Date")) {   //  The difference between local time and site time should be considered.
+            else if (item.getText().contains("Date")) {   //  The difference between local time and site time should be considered.
                 String date = driver.findElement(By.xpath("//*[@id=\"content\"]/div[1]/table/tbody/tr/td[" + c + "]")).getText();
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                System.out.println(test + ": " +"Date Added in site: " + date);
                 System.out.println(test + ": " +"local date: " + formatter.format(new Date()));
                 Assert.assertEquals(date, formatter.format(new Date()));
             }
@@ -207,7 +210,7 @@ public class FinalProject {
 
     @AfterMethod
     public void tearDown() {
-        driver.quit();
+//        driver.quit();
     }
 
     private String CreateRandomEmail() {
