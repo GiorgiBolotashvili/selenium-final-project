@@ -125,7 +125,9 @@ public class FinalProject {
         }
         Assert.assertTrue(fullCart.contains(firstPrice));
         driver.findElement(By.xpath("//*[@id=\"cart\"]/button")).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"cart\"]/ul/li[2]/div/p/a[2]/strong")));
         driver.findElement(By.xpath("//*[@id=\"cart\"]/ul/li[2]/div/p/a[2]/strong")).click();
+
 //        Fill Billing Details
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[id$='firstname']")));
         driver.findElement(By.cssSelector("input[id$='firstname']")).sendKeys(firstName);                               // Using cssSelector: example three
@@ -210,7 +212,7 @@ public class FinalProject {
 
     @AfterMethod
     public void tearDown() {
-//        driver.quit();
+        driver.quit();
     }
 
     private String CreateRandomEmail() {
